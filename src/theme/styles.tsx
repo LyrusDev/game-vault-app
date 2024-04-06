@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
   btnForm: {
     width: "100%",
     paddingVertical: 5,
-    marginTop: 30,
+    marginTop: 10,
     borderRadius: 10,
   },
 

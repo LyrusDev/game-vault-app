@@ -30,13 +30,27 @@ export default function RegisterScreen() {
 
   const [emailHasErrors, setEmailHasErrors] = useState<HasErrors>({
     visible: false,
-    text: "",
+    text: "El correo no es valido",
   });
 
   const [passwordHasErrors, setPasswordHasErrors] = useState<HasErrors>({
     visible: false,
-    text: "",
+    text: "Debe contener al menos 6 caracteres",
   });
+
+  function emailHasErrorVisible(visible: boolean) {
+    setEmailHasErrors({
+      ...emailHasErrors,
+      visible: visible,
+    });
+  }
+
+  function passwordHasErrorVisible(visible: boolean) {
+    setPasswordHasErrors({
+      ...passwordHasErrors,
+      visible: visible,
+    });
+  }
 
   const handlerSetRegisterData = (key: string, value: string) => {
     setRegisterData({
@@ -46,25 +60,41 @@ export default function RegisterScreen() {
   };
 
   const handlerRegisterData = async () => {
-    try {
-      const response = await createUserWithEmailAndPassword(auth, registerData.email, registerData.email);
+    if (!registerData.email) {
+      emailHasErrorVisible(true);
+    } else {
+      emailHasErrorVisible(false);
+    }
 
-      console.log(response);
+    if (registerData.password.length < 6) {
+      passwordHasErrorVisible(true);
+
+      return;
+    } else {
+      passwordHasErrorVisible(false);
+    }
+
+    try {
+      if (!emailHasErrors.visible && !passwordHasErrors.visible) {
+        const response = await createUserWithEmailAndPassword(auth, registerData.email, registerData.email);
+
+        console.log(response);
+        navigation.dispatch(CommonActions.navigate({ name: "Login" }));
+      }
     } catch (error: any) {
       const errorCode = error.code;
       console.log("Error: " + error);
-      
+
       switch (errorCode) {
         case "auth/invalid-email":
-          setEmailHasErrors({
-            visible: true,
-            text: "El correo no es valido",
-          });
-        case registerData.password.length < 6:
-          setPasswordHasErrors({
-            visible: true,
-            text: "La contraseña debe ser mayor a 6 caracteres",
-          });
+          emailHasErrorVisible(true);
+          break;
+        case "auth/email-already-in-use":
+          emailHasErrorVisible(true);
+          break;
+        case "auth/weak-password":
+          passwordHasErrorVisible(true);
+          break;
       }
     }
   };
@@ -86,6 +116,7 @@ export default function RegisterScreen() {
         <HelperText type="error" visible={emailHasErrors.visible}>
           {emailHasErrors.text}
         </HelperText>
+
         <Text style={styles.subtitleForm}>Contraseña</Text>
         <TextInput
           mode="outlined"
@@ -101,7 +132,7 @@ export default function RegisterScreen() {
           {passwordHasErrors.text}
         </HelperText>
 
-        <Button mode="elevated" textColor="#333" style={styles.btnForm} onPress={() => handlerRegisterData()}>
+        <Button mode="elevated" textColor="#333" style={styles.btnForm} onPress={handlerRegisterData}>
           Crear cuenta
         </Button>
 
