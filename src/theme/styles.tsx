@@ -58,12 +58,12 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 26,
     textAlign: "center",
+    marginBottom: 20,
   },
 
   subtitleForm: {
     color: "#fff",
     fontSize: 16,
-    marginTop: 20,
     marginBottom: 10,
   },
 
