@@ -3,7 +3,11 @@ import React from "react";
 import { Button, Text, TextInput } from "react-native-paper";
 import { styles } from "../theme/styles";
 
+import { CommonActions, useNavigation } from "@react-navigation/native";
+
 export default function LoginScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.containerForm}>
@@ -20,7 +24,9 @@ export default function LoginScreen() {
 
         <View style={styles.containerNavForm}>
           <Text style={styles.textForm}>¿No tienes una cuenta?</Text>
-          <Text style={styles.textNavForm}>Crear cuenta</Text>
+          <Text style={styles.textNavForm} onPress={() => navigation.dispatch(CommonActions.navigate({ name: "Register" }))}>
+            Crear cuenta
+          </Text>
         </View>
       </View>
     </View>
