@@ -59,7 +59,7 @@ export default function RegisterScreen() {
     });
   };
 
-  const handlerRegisterData = async () => {
+  const handlerRegister = async () => {
     if (!registerData.email) {
       emailHasErrorVisible(true);
     } else {
@@ -68,19 +68,16 @@ export default function RegisterScreen() {
 
     if (registerData.password.length < 6) {
       passwordHasErrorVisible(true);
-
       return;
     } else {
       passwordHasErrorVisible(false);
     }
 
     try {
-      if (!emailHasErrors.visible && !passwordHasErrors.visible) {
-        const response = await createUserWithEmailAndPassword(auth, registerData.email, registerData.email);
+      const response = await createUserWithEmailAndPassword(auth, registerData.email, registerData.password);
 
-        console.log(response);
-        navigation.dispatch(CommonActions.navigate({ name: "Login" }));
-      }
+      // console.log(response);
+      navigation.dispatch(CommonActions.navigate({ name: "Login" }));
     } catch (error: any) {
       const errorCode = error.code;
       console.log("Error: " + error);
@@ -97,6 +94,8 @@ export default function RegisterScreen() {
           break;
       }
     }
+
+    // console.log(registerData);
   };
 
   return (
@@ -111,7 +110,6 @@ export default function RegisterScreen() {
           textColor="#fff"
           style={styles.inputForm}
           onChangeText={(value) => handlerSetRegisterData("email", value)}
-          value={registerData.email}
         />
         <HelperText type="error" visible={emailHasErrors.visible}>
           {emailHasErrors.text}
@@ -125,14 +123,13 @@ export default function RegisterScreen() {
           style={styles.inputForm}
           secureTextEntry={showPassword}
           onChangeText={(value) => handlerSetRegisterData("password", value)}
-          value={registerData.password}
           right={<TextInput.Icon icon="eye" color="#fff" onPress={() => setShowPassword(!showPassword)} />}
         />
         <HelperText type="error" visible={passwordHasErrors.visible}>
           {passwordHasErrors.text}
         </HelperText>
 
-        <Button mode="elevated" textColor="#333" style={styles.btnForm} onPress={handlerRegisterData}>
+        <Button mode="elevated" textColor="#333" style={styles.btnForm} onPress={handlerRegister}>
           Crear cuenta
         </Button>
 
