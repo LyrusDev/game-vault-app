@@ -1,12 +1,14 @@
 import { StatusBar } from "expo-status-bar";
-import WelcomeScreen from "./src/screens/WelcomeScreen";
 import { PaperProvider } from "react-native-paper";
+
+import "react-native-gesture-handler";
+import MainNavigator from "./src/browser/MainNavigator";
 
 export default function App() {
   return (
     <PaperProvider>
       <StatusBar style="auto" />
-      <WelcomeScreen />
+      <MainNavigator />
     </PaperProvider>
   );
 }
