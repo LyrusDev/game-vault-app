@@ -76,7 +76,7 @@ export default function LoginScreen() {
       const response = await signInWithEmailAndPassword(auth, loginData.email, loginData.password);
 
       // console.log(response);
-      // navigation.dispatch(CommonActions.navigate({ name: "Profile" }));
+      navigation.dispatch(CommonActions.navigate({ name: "Tabs" }));
     } catch (error: any) {
       console.log("Error: " + error);
       const errorCode = error.code;
