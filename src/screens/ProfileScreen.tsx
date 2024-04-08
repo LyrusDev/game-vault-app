@@ -39,9 +39,8 @@ export default function ProfileScreen() {
 
   // logout
   const logout = () => {
-    // auth.signOut();
-
-    // navigation.navigate("Login");
+    auth.signOut();
+    navigation.dispatch(CommonActions.navigate({name:'Welcome'}))
     console.log("logout");
   };
 

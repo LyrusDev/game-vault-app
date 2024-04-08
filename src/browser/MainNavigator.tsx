@@ -12,8 +12,8 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import GameScreen  from "../screens/HomeScreen/GameScreen";
 import GameNavigator from "../screens/HomeScreen/HomeNavigator";
+import { set } from "firebase/database";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,12 +27,15 @@ interface Routes {
 }
 
 function MyStack() {
+  const navigation = useNavigation();
   // Usuario logueado o no
   const [isAuth, setIsAuth] = useState(false);
 
   // Pantalla de carga
   const [isLoading, setIsLoading] = useState(false);
 
+  const [firstRoute, setFirstRoute] = useState("Welcome" as string);
+  
   // Validar estado
   useEffect(() => {
     setIsLoading(true);
@@ -40,6 +43,7 @@ function MyStack() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Usuario logeado");
+        setFirstRoute("Tabs");
         setIsAuth(true);
       }
       setIsLoading(false);
@@ -69,11 +73,9 @@ function MyStack() {
           <ActivityIndicator size={35} />
         </View>
       ) : (
-        <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName={firstRoute} screenOptions={{ headerShown: false }}>
           {noAuthRoutes.map((item, index) => <Stack.Screen key={index} name={item.name} component={item.screen}/>)}
-          {isAuth
-            ? <Stack.Screen name="Tabs" component={AuthRoutes} />
-            :  null}
+          {isAuth ? <Stack.Screen name="Tabs" component={AuthRoutes} />: null }
         </Stack.Navigator>
       )}
     </>
@@ -81,17 +83,6 @@ function MyStack() {
 }
 
 function AuthRoutes() {
-  // Rutas usuario logeado
-
-  const navigation = useNavigation();
-  const autoLogin = () => {
-    if(navigationRef.isReady()){
-      navigation.dispatch(CommonActions.navigate({ name: "Tabs" }));
-    }
-  }
-  useEffect(() => {
-      autoLogin();
-  }, []);
   const authRoutes: Routes[] = [
     {
       name: "Home",
