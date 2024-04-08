@@ -92,6 +92,7 @@ function AuthRoutes() {
   useEffect(() => {
       autoLogin();
   }, []);
+  
   const authRoutes: Routes[] = [
     {
       name: "Home",
@@ -108,7 +109,7 @@ function AuthRoutes() {
   ];
 
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false ,         tabBarStyle: { 
+    <Tab.Navigator screenOptions={{ headerShown: false , tabBarStyle: { 
       backgroundColor: '#1C293A',
       borderTopColor: '#213651',
     },
