@@ -1,24 +1,28 @@
 import { createStackNavigator } from "@react-navigation/stack";
-
-import { NavigationContainer } from "@react-navigation/native";
+import { CommonActions, createNavigationContainerRef, NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../configs/firebaseConfig";
 import { View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, Icon } from "react-native-paper";
 import { styles } from "../theme/styles";
 
 import WelcomeScreen from "../screens/WelcomeScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import GameScreen  from "../screens/HomeScreen/GameScreen";
+import GameNavigator from "../screens/HomeScreen/HomeNavigator";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const navigationRef = createNavigationContainerRef();
 
 interface Routes {
   name: string;
+  label?: string;
+  icon?: string;
   screen: () => JSX.Element;
 }
 
@@ -35,6 +39,7 @@ function MyStack() {
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log("Usuario logeado");
         setIsAuth(true);
       }
       setIsLoading(false);
@@ -57,14 +62,6 @@ function MyStack() {
     },
   ];
 
-  // Rutas usuario logeado
-  const authRoutes: Routes[] = [
-    {
-      name: "Profile",
-      screen: ProfileScreen,
-    },
-  ];
-
   return (
     <>
       {isLoading ? (
@@ -73,28 +70,59 @@ function MyStack() {
         </View>
       ) : (
         <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
-          {!isAuth
-            ? noAuthRoutes.map((item, index) => <Stack.Screen key={index} name={item.name} component={item.screen} />)
-            : authRoutes.map((item, index) => <Stack.Screen key={index} name={item.name} component={item.screen} />)}
+          {noAuthRoutes.map((item, index) => <Stack.Screen key={index} name={item.name} component={item.screen}/>)}
+          {isAuth
+            ? <Stack.Screen name="Tabs" component={AuthRoutes} />
+            :  null}
         </Stack.Navigator>
       )}
     </>
   );
 }
 
-function MyTabs() {
+function AuthRoutes() {
   // Rutas usuario logeado
+
+  const navigation = useNavigation();
+  const autoLogin = () => {
+    if(navigationRef.isReady()){
+      navigation.dispatch(CommonActions.navigate({ name: "Tabs" }));
+    }
+  }
+  useEffect(() => {
+      autoLogin();
+  }, []);
   const authRoutes: Routes[] = [
     {
-      name: "Profile",
-      screen: ProfileScreen,
+      name: "Home",
+      label: 'Inicio',
+      icon: 'home',
+      screen: GameNavigator,
     },
+    {
+      name: "Profile",
+      label: 'Perfil',
+      icon: 'account',
+      screen: ProfileScreen,
+    }
   ];
 
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator screenOptions={{ headerShown: false ,         tabBarStyle: { 
+      backgroundColor: '#1C293A',
+      borderTopColor: '#213651',
+    },
+    tabBarActiveTintColor: '#3C90EF',
+    tabBarInactiveTintColor: 'gray',
+   }}  >
       {authRoutes.map((item, index) => (
-        <Tab.Screen key={index} name={item.name} component={item.screen} />
+        <Tab.Screen key={index} name={item.name} component={item.screen} options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Icon source={item.icon} color={color} size={30}/>
+          ),
+        }}
+ />
       ))}
     </Tab.Navigator>
   );
@@ -102,7 +130,7 @@ function MyTabs() {
 
 export default function MainNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <MyStack />
     </NavigationContainer>
   );
