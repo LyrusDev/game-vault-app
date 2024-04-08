@@ -13,7 +13,6 @@ import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import GameNavigator from "../screens/HomeScreen/HomeNavigator";
-import { set } from "firebase/database";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -99,7 +98,7 @@ function AuthRoutes() {
   ];
 
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false ,         tabBarStyle: { 
+    <Tab.Navigator screenOptions={{ headerShown: false , tabBarStyle: { 
       backgroundColor: '#1C293A',
       borderTopColor: '#213651',
     },
